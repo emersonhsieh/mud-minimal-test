@@ -1,7 +1,8 @@
 import { GodID as SingletonID, TxQueue } from "@latticexyz/network";
-import { World } from "@latticexyz/recs";
 import { SystemTypes } from "contracts/types/SystemTypes";
-import { useComponentValueStream } from "@latticexyz/std-client";
+
+import { Has, World } from "@latticexyz/recs";
+import { useEntityQuery, useComponentValue } from "@latticexyz/react";
 import { components, singletonIndex } from ".";
 
 type Props = {
@@ -11,7 +12,14 @@ type Props = {
 };
 
 export const App = ({ systems, components }: Props) => {
-  const counter = useComponentValueStream(components.Counter, singletonIndex);
+  const componentEntities = useEntityQuery([Has(components.Counter)]);
+  const counter = useComponentValue(
+    components.Counter,
+    componentEntities.length > 0 ? componentEntities[0] : singletonIndex
+  );
+
+  console.log("rerendering");
+
   return (
     <>
       <div>
